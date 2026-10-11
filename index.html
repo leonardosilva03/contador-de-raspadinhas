@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registo de Raspadinhas - Café</title>
+    <style>
+        :root {
+            --bg: #f4f6f9;
+            --card: #ffffff;
+            --text: #1e293b;
+            --c1: #0284c7;  /* 1€ - Azul */
+            --c2: #16a34a;  /* 2€ - Verde */
+            --c3: #ea580c;  /* 3€ - Laranja */
+            --c5: #9333ea;  /* 5€ - Roxo */
+            --c10: #e11d48; /* 10€ - Vermelho/Rosa Forte */
+            --danger: #dc2626;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 16px;
+            max-width: 1250px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card);
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .header-title h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+        }
+
+        .header-title p {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .totals-banner {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .total-box {
+            text-align: right;
+        }
+
+        .total-box span {
+            display: block;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: #64748b;
+            font-weight: 700;
+        }
+
+        .total-box strong {
+            font-size: 2rem;
+            color: #0f172a;
+        }
+
+        .total-box.highlight strong {
+            color: #16a34a;
+        }
+
+        /* Grelha Principal de 5 Botões */
+        .grid-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .scratch-card {
+            background: var(--card);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .btn-main {
+            border: none;
+            color: white;
+            padding: 28px 12px;
+            cursor: pointer;
+            transition: transform 0.08s ease, filter 0.15s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-main:active {
+            transform: scale(0.96);
+        }
+
+        .btn-main:hover {
+            filter: brightness(1.08);
+        }
+
+        .price-tag {
+            font-size: 2.8rem;
+            font-weight: 900;
+            line-height: 1;
+        }
+
+        .key-hint {
+            font-size: 0.8rem;
+            opacity: 0.85;
+            background: rgba(0,0,0,0.2);
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+
+        .bg-1 { background-color: var(--c1); }
+        .bg-2 { background-color: var(--c2); }
+        .bg-3 { background-color: var(--c3); }
+        .bg-5 { background-color: var(--c5); }
+        .bg-10 { background-color: var(--c10); }
+
+        .card-stats {
+            padding: 12px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+            font-size: 0.9rem;
+        }
+
+        .card-stats strong {
+            font-size: 1.15rem;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .btn-sub {
+            border: none;
+            background: #ffffff;
+            padding: 12px 8px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            color: #334155;
+            transition: background 0.15s;
+        }
+
+        .btn-sub:first-child {
+            border-right: 1px solid #e2e8f0;
+        }
+
+        .btn-sub:hover {
+            background: #f1f5f9;
+        }
+
+        .btn-sub:active {
+            background: #e2e8f0;
+        }
+
+        /* Painel Inferior: Controlo e Histórico */
+        .bottom-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .bottom-panel {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel-box {
+            background: var(--card);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .panel-box h2 {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            color: #334155;
+        }
+
+        .action-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .btn-ctrl {
+            flex: 1;
+            min-width: 140px;
+            padding: 14px 16px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-undo {
+            background: #fef3c7;
+            color: #b45309;
+            border: 1px solid #fde68a;
+        }
+
+        .btn-export {
+            background: #e0f2fe;
+            color: #0369a1;
+            border: 1px solid #bae6fd;
+        }
+
+        .btn-reset {
+            background: #fee2e2;
+            color: var(--danger);
+            border: 1px solid #fecaca;
+        }
+
+        .history-list {
+            list-style: none;
+            max-height: 180px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 10px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 0.9rem;
+        }
+
+        .history-item:first-child {
+            background: #f0fdf4;
+            font-weight: 700;
+            border-radius: 6px;
+        }
+
+        .history-time {
+            color: #64748b;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-title">
+            <h1>Registo Rápido de Raspadinhas</h1>
+            <p id="current-date"></p>
+        </div>
+        <div class="totals-banner">
+            <div class="total-box">
+                <span>Qtd. Vendida</span>
+                <strong id="total-qty">0</strong>
+            </div>
+            <div class="total-box highlight">
+                <span>Total em Caixa</span>
+                <strong id="total-eur">0 €</strong>
+            </div>
+        </div>
+    </header>
+
+    <div class="grid-buttons">
+        <!-- Raspadinha 1€ -->
+        <div class="scratch-card">
+            <button class="btn-main bg-1" onclick="addSale(1, 1)">
+                <span class="price-tag">+ 1 €</span>
+                <span class="key-hint">Tecla [1]</span>
+            </button>
+            <div class="card-stats">
+                <span>Vendidas: <strong id="qty-1">0</strong></span>
+                <span>Subtotal: <strong id="sub-1">0 €</strong></span>
+            </div>
+            <div class="quick-actions">
+                <button class="btn-sub" onclick="addSale(1, 5)">+5 Unid.</button>
+                <button class="btn-sub" onclick="addSale(1, -1)">-1 Corrigir</button>
+            </div>
+        </div>
+
+        <!-- Raspadinha 2€ -->
+        <div class="scratch-card">
+            <button class="btn-main bg-2" onclick="addSale(2, 1)">
+                <span class="price-tag">+ 2 €</span>
+                <span class="key-hint">Tecla [2]</span>
+            </button>
+            <div class="card-stats">
+                <span>Vendidas: <strong id="qty-2">0</strong></span>
+                <span>Subtotal: <strong id="sub-2">0 €</strong></span>
+            </div>
+            <div class="quick-actions">
+                <button class="btn-sub" onclick="addSale(2, 5)">+5 Unid.</button>
+                <button class="btn-sub" onclick="addSale(2, -1)">-1 Corrigir</button>
+            </div>
+        </div>
+
+        <!-- Raspadinha 3€ -->
+        <div class="scratch-card">
+            <button class="btn-main bg-3" onclick="addSale(3, 1)">
+                <span class="price-tag">+ 3 €</span>
+                <span class="key-hint">Tecla [3]</span>
+            </button>
+            <div class="card-stats">
+                <span>Vendidas: <strong id="qty-3">0</strong></span>
+                <span>Subtotal: <strong id="sub-3">0 €</strong></span>
+            </div>
+            <div class="quick-actions">
+                <button class="btn-sub" onclick="addSale(3, 5)">+5 Unid.</button>
+                <button class="btn-sub" onclick="addSale(3, -1)">-1 Corrigir</button>
+            </div>
+        </div>
+
+        <!-- Raspadinha 5€ -->
+        <div class="scratch-card">
+            <button class="btn-main bg-5" onclick="addSale(5, 1)">
+                <span class="price-tag">+ 5 €</span>
+                <span class="key-hint">Tecla [5]</span>
+            </button>
+            <div class="card-stats">
+                <span>Vendidas: <strong id="qty-5">0</strong></span>
+                <span>Subtotal: <strong id="sub-5">0 €</strong></span>
+            </div>
+            <div class="quick-actions">
+                <button class="btn-sub" onclick="addSale(5, 5)">+5 Unid.</button>
+                <button class="btn-sub" onclick="addSale(5, -1)">-1 Corrigir</button>
+            </div>
+        </div>
+
+        <!-- Raspadinha 10€ -->
+        <div class="scratch-card">
+            <button class="btn-main bg-10" onclick="addSale(10, 1)">
+                <span class="price-tag">+ 10 €</span>
+                <span class="key-hint">Tecla [0]</span>
+            </button>
+            <div class="card-stats">
+                <span>Vendidas: <strong id="qty-10">0</strong></span>
+                <span>Subtotal: <strong id="sub-10">0 €</strong></span>
+            </div>
+            <div class="quick-actions">
+                <button class="btn-sub" onclick="addSale(10, 5)">+5 Unid.</button>
+                <button class="btn-sub" onclick="addSale(10, -1)">-1 Corrigir</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-panel">
+        <div class="panel-box">
+            <h2>Ações de Caixa</h2>
+            <div class="action-bar">
+                <button class="btn-ctrl btn-undo" onclick="undoLast()">
+                    ↩ Anular Última (Backspace)
+                </button>
+                <button class="btn-ctrl btn-export" onclick="exportCSV()">
+                    📥 Guardar Excel (CSV)
+                </button>
+                <button class="btn-ctrl btn-reset" onclick="resetDay()">
+                    🗑 Fechar Dia (Limpar Tudo)
+                </button>
+            </div>
+        </div>
+
+        <div class="panel-box">
+            <h2>Últimos Registos (Para confirmar se já anotou)</h2>
+            <ul class="history-list" id="history-list">
+                <li class="history-item">Sem vendas registadas hoje.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'cafe_raspadinhas_v2';
+        const PRICES = [1, 2, 3, 5, 10];
+
+        let state = {
+            counts: { 1: 0, 2: 0, 3: 0, 5: 0, 10: 0 },
+            history: []
+        };
+
+        function loadState() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    // Garantir que todas as chaves (incluindo a de 10€) existem
+                    PRICES.forEach(p => {
+                        if (typeof parsed.counts[p] !== 'number') {
+                            parsed.counts[p] = 0;
+                        }
+                    });
+                    state = parsed;
+                } catch (e) {
+                    console.error("Erro ao carregar dados:", e);
+                }
+            }
+            updateDate();
+            render();
+        }
+
+        function saveState() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        }
+
+        function updateDate() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('current-date').textContent = now.toLocaleDateString('pt-PT', options);
+        }
+
+        function addSale(price, qty) {
+            if ((state.counts[price] || 0) + qty < 0) return;
+
+            state.counts[price] = (state.counts[price] || 0) + qty;
+
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+            state.history.unshift({
+                price: price,
+                qty: qty,
+                time: timeStr
+            });
+
+            if (state.history.length > 50) {
+                state.history.pop();
+            }
+
+            saveState();
+            render();
+        }
+
+        function undoLast() {
+            if (state.history.length === 0) return;
+            const last = state.history.shift();
+            state.counts[last.price] = Math.max(0, (state.counts[last.price] || 0) - last.qty);
+            saveState();
+            render();
+        }
+
+        function resetDay() {
+            const confirmReset = confirm("Tem a certeza que quer limpar todas as contagens para começar um novo dia?");
+            if (!confirmReset) return;
+
+            state = {
+                counts: { 1: 0, 2: 0, 3: 0, 5: 0, 10: 0 },
+                history: []
+            };
+            saveState();
+            render();
+        }
+
+        function exportCSV() {
+            const now = new Date();
+            const dateStr = now.toISOString().slice(0, 10);
+            const datePt = now.toLocaleDateString('pt-PT');
+
+            // Usa ponto e vírgula (;) para o Excel em Portugal separar automaticamente as colunas
+            let csvRows = [
+                `Data do Fecho;${datePt};`,
+                ``,
+                `Tipo de Raspadinha;Quantidade Vendida;Total (EUR)`
+            ];
+
+            let totalQty = 0;
+            let totalEur = 0;
+
+            PRICES.forEach(p => {
+                const q = state.counts[p] || 0;
+                const sub = q * p;
+                totalQty += q;
+                totalEur += sub;
+                csvRows.push(`Raspadinha ${p} €;${q};${sub} €`);
+            });
+
+            csvRows.push(`TOTAL;${totalQty};${totalEur} €`);
+
+            const csvString = csvRows.join("\r\n");
+
+            // O prefixo '\uFEFF' (UTF-8 BOM) obriga o Excel a ler os símbolos '€' e acentos corretamente
+            const blob = new Blob(["\uFEFF" + csvString], { type: "text/csv;charset=utf-8;" });
+            const url = URL.createObjectURL(blob);
+
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", `fecho_raspadinhas_${dateStr}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        function render() {
+            let totalQty = 0;
+            let totalEur = 0;
+
+            PRICES.forEach(p => {
+                const qty = state.counts[p] || 0;
+                const sub = qty * p;
+                totalQty += qty;
+                totalEur += sub;
+
+                document.getElementById(`qty-${p}`).textContent = qty;
+                document.getElementById(`sub-${p}`).textContent = `${sub} €`;
+            });
+
+            document.getElementById('total-qty').textContent = totalQty;
+            document.getElementById('total-eur').textContent = `${totalEur} €`;
+
+            const historyEl = document.getElementById('history-list');
+            historyEl.innerHTML = '';
+
+            if (state.history.length === 0) {
+                historyEl.innerHTML = '<li class="history-item">Sem vendas registadas hoje.</li>';
+            } else {
+                state.history.forEach((item, index) => {
+                    const li = document.createElement('li');
+                    li.className = 'history-item';
+                    const sign = item.qty > 0 ? `+${item.qty}` : item.qty;
+                    const totalMove = item.qty * item.price;
+                    const moveSign = totalMove > 0 ? `+${totalMove}€` : `${totalMove}€`;
+
+                    li.innerHTML = `
+                        <span>${index === 0 ? '🟢 ' : ''}<strong>${sign}x</strong> Raspadinha de <strong>${item.price}€</strong> (${moveSign})</span>
+                        <span class="history-time">${item.time}</span>
+                    `;
+                    historyEl.appendChild(li);
+                });
+            }
+        }
+
+        // Atalhos de teclado: 1, 2, 3, 5, 0 (para 10€) e Backspace para anular
+        window.addEventListener('keydown', (e) => {
+            if (['1', '2', '3', '5'].includes(e.key)) {
+                addSale(parseInt(e.key), 1);
+            } else if (e.key === '0') {
+                addSale(10, 1);
+            } else if (e.key === 'Backspace') {
+                undoLast();
+            }
+        });
+
+        loadState();
+    </script>
+</body>
+</html>
