@@ -9,11 +9,11 @@
             --bg: #f4f6f9;
             --card: #ffffff;
             --text: #1e293b;
-            --c1: #0284c7;  /* 1€ - Azul */
-            --c2: #16a34a;  /* 2€ - Verde */
-            --c3: #ea580c;  /* 3€ - Laranja */
-            --c5: #9333ea;  /* 5€ - Roxo */
-            --c10: #e11d48; /* 10€ - Vermelho/Rosa Forte */
+            --c1: #0284c7;  
+            --c2: #16a34a;  
+            --c3: #ea580c;  
+            --c5: #9333ea;  
+            --c10: #e11d48; 
             --danger: #dc2626;
         }
 
@@ -60,10 +60,18 @@
             display: flex;
             gap: 24px;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .total-box {
             text-align: right;
+            padding-left: 16px;
+            border-left: 2px solid #e2e8f0;
+        }
+
+        .total-box:first-child {
+            border-left: none;
+            padding-left: 0;
         }
 
         .total-box span {
@@ -79,14 +87,17 @@
             color: #0f172a;
         }
 
+        .total-box.danger strong {
+            color: var(--danger);
+        }
+
         .total-box.highlight strong {
             color: #16a34a;
         }
 
-        /* Grelha Principal de 5 Botões */
         .grid-buttons {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 14px;
             margin-bottom: 20px;
         }
@@ -103,7 +114,7 @@
         .btn-main {
             border: none;
             color: white;
-            padding: 28px 12px;
+            padding: 24px 12px;
             cursor: pointer;
             transition: transform 0.08s ease, filter 0.15s;
             display: flex;
@@ -144,47 +155,57 @@
         .card-stats {
             padding: 12px 14px;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            gap: 4px;
             background: #f8fafc;
             border-top: 1px solid #e2e8f0;
             font-size: 0.9rem;
         }
 
-        .card-stats strong {
-            font-size: 1.15rem;
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .stat-row strong {
+            font-size: 1.05rem;
+        }
+        
+        .stat-prize {
+            color: var(--danger);
         }
 
         .quick-actions {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 1fr 1fr;
             border-top: 1px solid #e2e8f0;
         }
 
         .btn-sub {
             border: none;
             background: #ffffff;
-            padding: 12px 8px;
+            padding: 10px 4px;
             font-weight: 700;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             cursor: pointer;
             color: #334155;
             transition: background 0.15s;
-        }
-
-        .btn-sub:first-child {
             border-right: 1px solid #e2e8f0;
         }
 
-        .btn-sub:hover {
-            background: #f1f5f9;
+        .btn-sub:last-child {
+            border-right: none;
         }
 
-        .btn-sub:active {
-            background: #e2e8f0;
+        .btn-sub:hover { background: #f1f5f9; }
+        .btn-sub:active { background: #e2e8f0; }
+        
+        .btn-prize {
+            color: #b45309;
+            background: #fffbeb;
         }
+        .btn-prize:hover { background: #fef3c7; }
 
-        /* Painel Inferior: Controlo e Histórico */
         .bottom-panel {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -192,9 +213,7 @@
         }
 
         @media (max-width: 768px) {
-            .bottom-panel {
-                grid-template-columns: 1fr;
-            }
+            .bottom-panel { grid-template-columns: 1fr; }
         }
 
         .panel-box {
@@ -231,23 +250,9 @@
             gap: 8px;
         }
 
-        .btn-undo {
-            background: #fef3c7;
-            color: #b45309;
-            border: 1px solid #fde68a;
-        }
-
-        .btn-export {
-            background: #e0f2fe;
-            color: #0369a1;
-            border: 1px solid #bae6fd;
-        }
-
-        .btn-reset {
-            background: #fee2e2;
-            color: var(--danger);
-            border: 1px solid #fecaca;
-        }
+        .btn-undo { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+        .btn-export { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+        .btn-reset { background: #fee2e2; color: var(--danger); border: 1px solid #fecaca; }
 
         .history-list {
             list-style: none;
@@ -269,6 +274,13 @@
             border-radius: 6px;
         }
 
+        .history-item.prize-entry {
+            color: var(--danger);
+        }
+        .history-item.prize-entry:first-child {
+            background: #fef2f2;
+        }
+
         .history-time {
             color: #64748b;
             font-family: monospace;
@@ -284,96 +296,22 @@
         </div>
         <div class="totals-banner">
             <div class="total-box">
-                <span>Qtd. Vendida</span>
-                <strong id="total-qty">0</strong>
+                <span>Vendas (Qtd: <span id="total-qty" style="display:inline;color:inherit;font-size:inherit">0</span>)</span>
+                <strong id="total-vendas">0 €</strong>
+            </div>
+            <div class="total-box danger">
+                <span>Prémios Pagos</span>
+                <strong id="total-premios">0 €</strong>
             </div>
             <div class="total-box highlight">
-                <span>Total em Caixa</span>
-                <strong id="total-eur">0 €</strong>
+                <span>Saldo em Caixa</span>
+                <strong id="total-saldo">0 €</strong>
             </div>
         </div>
     </header>
 
     <div class="grid-buttons">
-        <!-- Raspadinha 1€ -->
-        <div class="scratch-card">
-            <button class="btn-main bg-1" onclick="addSale(1, 1)">
-                <span class="price-tag">+ 1 €</span>
-                <span class="key-hint">Tecla [1]</span>
-            </button>
-            <div class="card-stats">
-                <span>Vendidas: <strong id="qty-1">0</strong></span>
-                <span>Subtotal: <strong id="sub-1">0 €</strong></span>
-            </div>
-            <div class="quick-actions">
-                <button class="btn-sub" onclick="addSale(1, 5)">+5 Unid.</button>
-                <button class="btn-sub" onclick="addSale(1, -1)">-1 Corrigir</button>
-            </div>
-        </div>
-
-        <!-- Raspadinha 2€ -->
-        <div class="scratch-card">
-            <button class="btn-main bg-2" onclick="addSale(2, 1)">
-                <span class="price-tag">+ 2 €</span>
-                <span class="key-hint">Tecla [2]</span>
-            </button>
-            <div class="card-stats">
-                <span>Vendidas: <strong id="qty-2">0</strong></span>
-                <span>Subtotal: <strong id="sub-2">0 €</strong></span>
-            </div>
-            <div class="quick-actions">
-                <button class="btn-sub" onclick="addSale(2, 5)">+5 Unid.</button>
-                <button class="btn-sub" onclick="addSale(2, -1)">-1 Corrigir</button>
-            </div>
-        </div>
-
-        <!-- Raspadinha 3€ -->
-        <div class="scratch-card">
-            <button class="btn-main bg-3" onclick="addSale(3, 1)">
-                <span class="price-tag">+ 3 €</span>
-                <span class="key-hint">Tecla [3]</span>
-            </button>
-            <div class="card-stats">
-                <span>Vendidas: <strong id="qty-3">0</strong></span>
-                <span>Subtotal: <strong id="sub-3">0 €</strong></span>
-            </div>
-            <div class="quick-actions">
-                <button class="btn-sub" onclick="addSale(3, 5)">+5 Unid.</button>
-                <button class="btn-sub" onclick="addSale(3, -1)">-1 Corrigir</button>
-            </div>
-        </div>
-
-        <!-- Raspadinha 5€ -->
-        <div class="scratch-card">
-            <button class="btn-main bg-5" onclick="addSale(5, 1)">
-                <span class="price-tag">+ 5 €</span>
-                <span class="key-hint">Tecla [5]</span>
-            </button>
-            <div class="card-stats">
-                <span>Vendidas: <strong id="qty-5">0</strong></span>
-                <span>Subtotal: <strong id="sub-5">0 €</strong></span>
-            </div>
-            <div class="quick-actions">
-                <button class="btn-sub" onclick="addSale(5, 5)">+5 Unid.</button>
-                <button class="btn-sub" onclick="addSale(5, -1)">-1 Corrigir</button>
-            </div>
-        </div>
-
-        <!-- Raspadinha 10€ -->
-        <div class="scratch-card">
-            <button class="btn-main bg-10" onclick="addSale(10, 1)">
-                <span class="price-tag">+ 10 €</span>
-                <span class="key-hint">Tecla [0]</span>
-            </button>
-            <div class="card-stats">
-                <span>Vendidas: <strong id="qty-10">0</strong></span>
-                <span>Subtotal: <strong id="sub-10">0 €</strong></span>
-            </div>
-            <div class="quick-actions">
-                <button class="btn-sub" onclick="addSale(10, 5)">+5 Unid.</button>
-                <button class="btn-sub" onclick="addSale(10, -1)">-1 Corrigir</button>
-            </div>
-        </div>
+        <!-- Gerado dinamicamente no JS para poupar código HTML repetido -->
     </div>
 
     <div class="bottom-panel">
@@ -393,32 +331,65 @@
         </div>
 
         <div class="panel-box">
-            <h2>Últimos Registos (Para confirmar se já anotou)</h2>
+            <h2>Últimos Registos</h2>
             <ul class="history-list" id="history-list">
-                <li class="history-item">Sem vendas registadas hoje.</li>
+                <li class="history-item">Sem registos hoje.</li>
             </ul>
         </div>
     </div>
 
     <script>
-        const STORAGE_KEY = 'cafe_raspadinhas_v2';
+        const STORAGE_KEY = 'cafe_raspadinhas_v3';
         const PRICES = [1, 2, 3, 5, 10];
+        const COLORS = { 1: 'bg-1', 2: 'bg-2', 3: 'bg-3', 5: 'bg-5', 10: 'bg-10' };
+        const KEYS = { 1: '1', 2: '2', 3: '3', 5: '5', 10: '0' };
 
         let state = {
             counts: { 1: 0, 2: 0, 3: 0, 5: 0, 10: 0 },
+            prizes: { 1: 0, 2: 0, 3: 0, 5: 0, 10: 0 },
             history: []
         };
+
+        function buildGrid() {
+            const grid = document.querySelector('.grid-buttons');
+            grid.innerHTML = '';
+            PRICES.forEach(p => {
+                grid.innerHTML += `
+                    <div class="scratch-card">
+                        <button class="btn-main ${COLORS[p]}" onclick="addSale(${p}, 1)">
+                            <span class="price-tag">+ ${p} €</span>
+                            <span class="key-hint">Tecla [${KEYS[p]}]</span>
+                        </button>
+                        <div class="card-stats">
+                            <div class="stat-row">
+                                <span>Vendidas (<strong id="qty-${p}">0</strong>):</span>
+                                <strong><span id="sub-${p}">0</span> €</strong>
+                            </div>
+                            <div class="stat-row stat-prize">
+                                <span>Prémios Pagos:</span>
+                                <strong><span id="prize-${p}">0</span> €</strong>
+                            </div>
+                        </div>
+                        <div class="quick-actions">
+                            <button class="btn-sub" onclick="addSale(${p}, 5)">+5 Unid.</button>
+                            <button class="btn-sub" onclick="addSale(${p}, -1)">-1 Erro</button>
+                            <button class="btn-sub btn-prize" onclick="addPrize(${p})">🏆 Prémio</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
 
         function loadState() {
             const saved = localStorage.getItem(STORAGE_KEY);
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
-                    // Garantir que todas as chaves (incluindo a de 10€) existem
+                    // Migração de dados caso venha de versões antigas
                     PRICES.forEach(p => {
-                        if (typeof parsed.counts[p] !== 'number') {
-                            parsed.counts[p] = 0;
-                        }
+                        if (typeof parsed.counts[p] !== 'number') parsed.counts[p] = 0;
+                        if (!parsed.prizes) parsed.prizes = {};
+                        if (typeof parsed.prizes[p] !== 'number') parsed.prizes[p] = 0;
                     });
                     state = parsed;
                 } catch (e) {
@@ -439,23 +410,34 @@
             document.getElementById('current-date').textContent = now.toLocaleDateString('pt-PT', options);
         }
 
+        function getTimeStr() {
+            return new Date().toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        }
+
         function addSale(price, qty) {
             if ((state.counts[price] || 0) + qty < 0) return;
+            state.counts[price] += qty;
+            
+            state.history.unshift({ type: 'sale', price, qty, time: getTimeStr() });
+            if (state.history.length > 50) state.history.pop();
 
-            state.counts[price] = (state.counts[price] || 0) + qty;
+            saveState();
+            render();
+        }
 
-            const now = new Date();
-            const timeStr = now.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-
-            state.history.unshift({
-                price: price,
-                qty: qty,
-                time: timeStr
-            });
-
-            if (state.history.length > 50) {
-                state.history.pop();
+        function addPrize(price) {
+            let val = prompt(`Qual o valor do PRÉMIO pago na raspadinha de ${price}€? (Use números, ex: 20 ou 20.50)`);
+            if (val === null || val.trim() === "") return;
+            
+            let numVal = parseFloat(val.replace(',', '.'));
+            if (isNaN(numVal) || numVal <= 0) {
+                alert("Valor inválido.");
+                return;
             }
+
+            state.prizes[price] += numVal;
+            state.history.unshift({ type: 'prize', price, val: numVal, time: getTimeStr() });
+            if (state.history.length > 50) state.history.pop();
 
             saveState();
             render();
@@ -464,19 +446,20 @@
         function undoLast() {
             if (state.history.length === 0) return;
             const last = state.history.shift();
-            state.counts[last.price] = Math.max(0, (state.counts[last.price] || 0) - last.qty);
+            
+            if (last.type === 'sale') {
+                state.counts[last.price] = Math.max(0, state.counts[last.price] - last.qty);
+            } else if (last.type === 'prize') {
+                state.prizes[last.price] = Math.max(0, state.prizes[last.price] - last.val);
+            }
+            
             saveState();
             render();
         }
 
         function resetDay() {
-            const confirmReset = confirm("Tem a certeza que quer limpar todas as contagens para começar um novo dia?");
-            if (!confirmReset) return;
-
-            state = {
-                counts: { 1: 0, 2: 0, 3: 0, 5: 0, 10: 0 },
-                history: []
-            };
+            if (!confirm("Tem a certeza que quer limpar tudo para começar um novo dia?")) return;
+            state = { counts: { 1: 0, 2: 0, 3: 0, 5: 0, 10: 0 }, prizes: { 1: 0, 2: 0, 3: 0, 5: 0, 10: 0 }, history: [] };
             saveState();
             render();
         }
@@ -486,32 +469,30 @@
             const dateStr = now.toISOString().slice(0, 10);
             const datePt = now.toLocaleDateString('pt-PT');
 
-            // Usa ponto e vírgula (;) para o Excel em Portugal separar automaticamente as colunas
             let csvRows = [
-                `Data do Fecho;${datePt};`,
+                `Data do Fecho;${datePt};;`,
                 ``,
-                `Tipo de Raspadinha;Quantidade Vendida;Total (EUR)`
+                `Tipo de Raspadinha;Qtd Vendida;Total Vendas;Prémios Pagos;Saldo Final`
             ];
 
-            let totalQty = 0;
-            let totalEur = 0;
+            let tQty = 0, tVendas = 0, tPremios = 0;
 
             PRICES.forEach(p => {
                 const q = state.counts[p] || 0;
-                const sub = q * p;
-                totalQty += q;
-                totalEur += sub;
-                csvRows.push(`Raspadinha ${p} €;${q};${sub} €`);
+                const subVendas = q * p;
+                const subPremios = state.prizes[p] || 0;
+                const saldo = subVendas - subPremios;
+                
+                tQty += q; tVendas += subVendas; tPremios += subPremios;
+                
+                csvRows.push(`Raspadinha ${p} €;${q};${subVendas} €;${subPremios.toFixed(2)} €;${saldo.toFixed(2)} €`);
             });
 
-            csvRows.push(`TOTAL;${totalQty};${totalEur} €`);
+            csvRows.push(``);
+            csvRows.push(`TOTAIS GERAIS;${tQty};${tVendas} €;${tPremios.toFixed(2)} €;${(tVendas - tPremios).toFixed(2)} €`);
 
-            const csvString = csvRows.join("\r\n");
-
-            // O prefixo '\uFEFF' (UTF-8 BOM) obriga o Excel a ler os símbolos '€' e acentos corretamente
-            const blob = new Blob(["\uFEFF" + csvString], { type: "text/csv;charset=utf-8;" });
+            const blob = new Blob(["\uFEFF" + csvRows.join("\r\n")], { type: "text/csv;charset=utf-8;" });
             const url = URL.createObjectURL(blob);
-
             const link = document.createElement("a");
             link.setAttribute("href", url);
             link.setAttribute("download", `fecho_raspadinhas_${dateStr}.csv`);
@@ -522,45 +503,48 @@
         }
 
         function render() {
-            let totalQty = 0;
-            let totalEur = 0;
+            let tQty = 0, tVendas = 0, tPremios = 0;
 
             PRICES.forEach(p => {
                 const qty = state.counts[p] || 0;
-                const sub = qty * p;
-                totalQty += qty;
-                totalEur += sub;
+                const subV = qty * p;
+                const subP = state.prizes[p] || 0;
+                
+                tQty += qty; tVendas += subV; tPremios += subP;
 
                 document.getElementById(`qty-${p}`).textContent = qty;
-                document.getElementById(`sub-${p}`).textContent = `${sub} €`;
+                document.getElementById(`sub-${p}`).textContent = subV;
+                document.getElementById(`prize-${p}`).textContent = subP.toFixed(2).replace('.', ',');
             });
 
-            document.getElementById('total-qty').textContent = totalQty;
-            document.getElementById('total-eur').textContent = `${totalEur} €`;
+            document.getElementById('total-qty').textContent = tQty;
+            document.getElementById('total-vendas').textContent = `${tVendas} €`;
+            document.getElementById('total-premios').textContent = `${tPremios.toFixed(2).replace('.', ',')} €`;
+            document.getElementById('total-saldo').textContent = `${(tVendas - tPremios).toFixed(2).replace('.', ',')} €`;
 
             const historyEl = document.getElementById('history-list');
             historyEl.innerHTML = '';
 
             if (state.history.length === 0) {
-                historyEl.innerHTML = '<li class="history-item">Sem vendas registadas hoje.</li>';
+                historyEl.innerHTML = '<li class="history-item">Sem registos hoje.</li>';
             } else {
                 state.history.forEach((item, index) => {
                     const li = document.createElement('li');
-                    li.className = 'history-item';
-                    const sign = item.qty > 0 ? `+${item.qty}` : item.qty;
-                    const totalMove = item.qty * item.price;
-                    const moveSign = totalMove > 0 ? `+${totalMove}€` : `${totalMove}€`;
-
-                    li.innerHTML = `
-                        <span>${index === 0 ? '🟢 ' : ''}<strong>${sign}x</strong> Raspadinha de <strong>${item.price}€</strong> (${moveSign})</span>
-                        <span class="history-time">${item.time}</span>
-                    `;
+                    
+                    if (item.type === 'sale') {
+                        li.className = 'history-item';
+                        const sign = item.qty > 0 ? `+${item.qty}` : item.qty;
+                        const moveSign = (item.qty * item.price) > 0 ? `+${item.qty * item.price}€` : `${item.qty * item.price}€`;
+                        li.innerHTML = `<span>${index === 0 ? '🟢 ' : ''}<strong>${sign}x</strong> Rasp. <strong>${item.price}€</strong> (${moveSign})</span><span class="history-time">${item.time}</span>`;
+                    } else {
+                        li.className = 'history-item prize-entry';
+                        li.innerHTML = `<span>${index === 0 ? '🔴 ' : ''}🏆 Prémio Pago na Rasp. <strong>${item.price}€</strong> (-${item.val}€)</span><span class="history-time">${item.time}</span>`;
+                    }
                     historyEl.appendChild(li);
                 });
             }
         }
 
-        // Atalhos de teclado: 1, 2, 3, 5, 0 (para 10€) e Backspace para anular
         window.addEventListener('keydown', (e) => {
             if (['1', '2', '3', '5'].includes(e.key)) {
                 addSale(parseInt(e.key), 1);
@@ -571,6 +555,7 @@
             }
         });
 
+        buildGrid();
         loadState();
     </script>
 </body>
